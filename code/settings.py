@@ -6,6 +6,8 @@ height = 958
 
 card_speed = 5
 
+show_debug = True
+
 table_default = pygame.image.load("../graphics/table/table1.jpg")
 
 card_spawn_y = -100
@@ -19,3 +21,4 @@ MenuButtonActive = pygame.USEREVENT + 4
 FiveCardButtonActive = pygame.USEREVENT + 5
 EndGame = pygame.USEREVENT + 6
 MusicToggle = pygame.USEREVENT + 7
+ROH = pygame.USEREVENT + 8

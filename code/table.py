@@ -3,10 +3,11 @@ from mainmenu import ESCMenu
 from debug import debug
 from card import *
 from buttons import *
-from ui import PlayerUI, PotUI
+from ui import OpponentUI, PlayerUI, PotUI
 from settings import *
 from person import *
 import game_data
+import settings
 
 class Table():
     def __init__(self, screen, game):
@@ -20,6 +21,7 @@ class Table():
         self.game = game()
         self.forced_deal = forced_deal = [[5, "Hearts"], [10, "Hearts"], [6, "Hearts"], [2, "Diamonds"], [1, "Diamonds"]]
 
+        self.clock = [0,0,0]
         #deck
         self.deck = Deck()
 
@@ -37,6 +39,7 @@ class Table():
         #UI
         self.player_ui = PlayerUI((0,958), 40 , '../graphics/UI.png', self.game.game_type)
         self.pot_ui = PotUI((((self.display_surface.get_width() / 2) - 600), ((self.display_surface.get_height() / 2) - 40)), 40, '../graphics/UI2.png')
+        self.opponent_ui = OpponentUI((1350,200), 40, "../graphics/OPUI.png")
 
         #menu
         self.menu = ESCMenu('../graphics/menu.png', ((self.display_surface.get_width() / 2), (self.display_surface.get_height() / 2)) )
@@ -51,6 +54,12 @@ class Table():
 
     def change_bg(self):
         pass
+
+    def show_roh(self):
+        if self.menu.roh_active == False:
+            self.menu.roh_active = True
+        else:
+            self.menu.roh_active = False
 
     def reset(self):
         game_data.phase = 1
@@ -96,7 +105,21 @@ class Table():
                 index += 1
             self.forced_deal.clear()
 
+    def clock_tic(self):
+        if self.clock[2] == 60:
+            self.clock[2] = 0
+            self.clock[1] += 1
+        else:
+            self.clock[2] += 1
+
+        if self.clock[1] == 60:
+            self.clock[0] += 1
+            self.clock[1] = 0
+
     def update(self):
+
+        self.clock_tic()
+
         if self.game.menu_active:
             self.menu.update()
         else:
@@ -108,6 +131,7 @@ class Table():
             #ui
             self.player_ui.update(str(self.player.player_cash), self.player.player_hand)
             self.pot_ui.update(game_data.pot)
+            self.opponent_ui.update(self.opponent.player_cash, self.opponent.player_hand)
 
             #draw cards
             self.player.player_cards.update()
@@ -127,6 +151,8 @@ class Table():
             self.bet_button.update()
             self.fold_button.update()
 
-            debug('opponet: ' + str(self.opponent.player_hand), 30)
-            debug('player: ' + str(self.player.player_hand), 50)
-            debug("opponent cash: " + str(self.opponent.player_cash), 70)
+            if settings.show_debug == True:
+                debug('Phase: ' + str(game_data.phase))
+                debug('Opponet Hand: ' + str(self.opponent.player_hand), 30)
+                debug('player Hand: ' + str(self.player.player_hand), 50)
+                debug('Clock: ' + str(self.clock[0]) + ":" + str(self.clock[1]) + ":" + str(self.clock[2]), 70)

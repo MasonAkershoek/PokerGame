@@ -1,3 +1,4 @@
+import py
 import pygame
 from settings import *
 
@@ -101,14 +102,22 @@ class ESCMenu(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = pos)
         self.display_surface = pygame.display.get_surface()
 
+        self.roh_active = False
+        self.roh = RankOfHands()
+
         #buttons
         self.music_button = MusicButton(((self.display_surface.get_width() / 2), ((self.display_surface.get_height() / 2) - 200)), 'Music')
-        self.quit_button = QuitButton(((self.display_surface.get_width() / 2), (self.display_surface.get_height() / 2)), 'Quit')
+        self.quit_button = QuitButton(((self.display_surface.get_width() / 2), ((self.display_surface.get_height() / 2) + 200)), 'Quit')
+        self.ROH_button = ROHButton((self.rect.centerx, ((self.display_surface.get_height() / 2))), 'ROH' )
 
     def update(self):
         self.display_surface.blit(self.image, self.rect)
         self.music_button.update()
         self.quit_button.update()
+        self.ROH_button.update()
+        if self.roh_active == True:
+            self.roh.update()
+
 
 class MusicButton(Button):
     def __init__(self, pos, text):
@@ -117,9 +126,27 @@ class MusicButton(Button):
     def action(self):
         pygame.event.post(pygame.event.Event(MusicToggle))
 
+
 class QuitButton(Button):
     def __init__(self, pos, text):
         super().__init__(pos, text)
 
     def action(self):
         pygame.event.post(pygame.event.Event(EndGame))
+
+class ROHButton(Button):
+    def __init__(self, pos, text):
+        super().__init__(pos, text)
+
+    def action(self):
+        pygame.event.post(pygame.event.Event(ROH))
+
+class RankOfHands(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("../graphics/roh.png")
+        self.rect = self.image.get_rect(center = ((width/2),(height/2)))
+        self.display_surface = pygame.display.get_surface()
+
+    def update(self):
+        self.display_surface.blit(self.image, self.rect)

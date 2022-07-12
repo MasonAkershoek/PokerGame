@@ -7,14 +7,23 @@ import os
 
 class Deck:
     def __init__(self):
+
+        # Creates all the cards in the deck and asigns them to the cards variable
         self.cards = self.get_cards()
+
+        # A list of cards that cannot be used again in the same round
         self.used_cards = []
     
+
     def get_cards(self):
+        
+        # Contains the created cards to be returned
         cards = []
+
+        # Contains the four posable suits of the cards to be used in card generation
         suits = ['Clubs','Diamonds','Hearts','Spades']
 
-        #iterate through all card images
+        # Iterate through all card images
         for x in os.scandir('../graphics/cards'):
             card = []
             path = x.path
@@ -53,8 +62,6 @@ class Deck:
             if x[1] == suit:
                 if int(x[2]) == int(card_num):
                     return x
-
-            
 
 class Card(pygame.sprite.Sprite):
     def __init__(self, card_num, suit, path, pos, destination, dely):
